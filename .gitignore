@@ -1,0 +1,11 @@
+# platformio
+.pio
+.pioenvs
+.piolibdeps
+CMakeListsPrivate.txt
+
+cmake-build-debug
+
+# IntelliJ
+.idea
+*.iml
