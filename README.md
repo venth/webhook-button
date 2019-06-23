@@ -60,3 +60,15 @@ When the webhook button is pushed then it calls the configured url accordingly t
     
     Set `constant WORKING_PROGRAM   = false;`
     compile by `platformio run` and upload `platformio run --target upload`
+
+# Appendix
+## Lectures
+* [Setup CLion and Arduino](https://www.instructables.com/id/Setup-JetBrains-Clion-for-Arduino-Development/)
+* [Clion, Arduino and platformio combo setup](https://stuetzpunkt.wordpress.com/2017/06/26/a-first-program-with-esp8266esp-01-clion-and-platformio/)
+* [Platformio Documentation](http://docs.platformio.org/en/stable/index.html)
+* [Wifi Manager](https://github.com/tzapu/WiFiManager/wiki/API-reference)
+* [aRest](https://github.com/marcoschwartz/aREST/blob/master/README.md)
+* [ESP8266 HTTPClient examples](https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266HTTPClient/examples/BasicHttpsClient/BasicHttpsClient.ino)
+* [ESP8266 Decoding / Encoding JSON](https://randomnerdtutorials.com/decoding-and-encoding-json-with-arduino-or-esp8266/)
+* [Why doesn't the built led work for Arduino NodeMCU v3](https://arduino.stackexchange.com/questions/38477/does-the-node-mcu-v3-lolin-not-have-a-builtin-led)
+* [How do properly call a https call using ESP8266 HTTPClient](https://medium.com/@dfa_31434/doing-ssl-requests-on-esp8266-correctly-c1f60ad46f5e)
