@@ -42,8 +42,12 @@ When the webhook button is pushed then it calls the configured url accordingly t
 1. Install platformio
    
     `brew install platformio`
+    
+1. Clone this project
+    
+    `git clone https://github.com/venth/webhook-button.git` 
 
-1. Prepare project's dir
+1. Go to freshly created directory "webhook-button" and prepare project's for CLion
 
     Create project's directory and within the directory execute command:
     `platformio init --ide clion --board nodemcuv2` 
@@ -119,3 +123,5 @@ When the webhook button is pushed then it calls the configured url accordingly t
 * [Why doesn't the built led work for Arduino NodeMCU v3](https://arduino.stackexchange.com/questions/38477/does-the-node-mcu-v3-lolin-not-have-a-builtin-led)
 * [How do properly call a https call using ESP8266 HTTPClient](https://medium.com/@dfa_31434/doing-ssl-requests-on-esp8266-correctly-c1f60ad46f5e)
 * [Embedded Template Library](https://www.etlcpp.com)
+* [Arduino official documentation](https://www.arduino.cc/reference/en/language/functions/digital-io/digitalread/)
+* [Nodemcu pinout](https://circuits4you.com/2017/12/31/nodemcu-pinout/)
