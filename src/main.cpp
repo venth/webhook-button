@@ -11,6 +11,9 @@
 
 #include <SoftwareSerial.h>
 
+#include <etl/message.h>
+
+etl::message<1> message;
 
 SoftwareSerial ESPserial(2, 3); // RX | TX
 
@@ -48,6 +51,8 @@ void setup() {
 
     WiFiManager wifiManager;
     //sets timeout in seconds until configuration portal gets turned off.
+    wifiManager.setTimeout(120);
+
     //If not specified device will remain in configuration mode until
     //switched off via webserver.
     if (WiFi.SSID() != "")
@@ -56,8 +61,9 @@ void setup() {
     //it starts an access point
     //and goes into a blocking loop awaiting configuration
     //Delete these two parameters if you do not want a WiFi password on your configuration access point
-    if (wifiManager.startConfigPortal("webhook-button",
-                                      "72ad2cc8-5756-4804-b4d8-ae5cbacfab31")) {
+    String apName = "webhook-button" + String(ESP.getChipId());
+    const char *password = "72ad2cc8-5756-4804-b4d8-ae5cbacfab31";
+    if (wifiManager.startConfigPortal(apName.c_str(), password)) {
         //if you get here you have connected to the WiFi
         Serial.println("connected...yeey :)");
     } else {
@@ -84,6 +90,4 @@ void loop() {
     if (!WORKING_PROGRAM) {
         return;
     }
-
-    Serial.println("Working?");
 }
