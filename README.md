@@ -110,6 +110,9 @@ When the webhook button is pushed then it calls the configured url accordingly t
     
     The next issue is caused by ecl_timer.c file. The fix is to use script executed before build that removes ecl_timer
     files. The script name: `clean_timer.py` and configuration in the platformio.ini: `extra_scripts = pre:clean_timer.py`
+    
+    Ambiguous stl functions issue was caused by wrongly prepared `etl_profile.h` file. Currently instead of using direct include of
+    a specific profile just add `#define PROFILE_XXX`
 
 # Appendix
 ## Lectures

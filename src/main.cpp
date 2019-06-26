@@ -11,9 +11,6 @@
 
 #include <SoftwareSerial.h>
 
-#include <etl/message.h>
-
-etl::message<1> message;
 
 SoftwareSerial ESPserial(2, 3); // RX | TX
 
