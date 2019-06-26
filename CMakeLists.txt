@@ -63,4 +63,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(${PROJECT_NAME} ${SRC_LIST} lib/Detector/src/DeviceMessageBus.cpp lib/Detector/src/DeviceMessageBus.h)
+add_executable(${PROJECT_NAME} ${SRC_LIST})

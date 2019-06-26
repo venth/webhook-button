@@ -4,9 +4,11 @@
 
 #include "button_messages.h"
 #include "ButtonPressingDetector.h"
+#include "assertions/MessageBusVerifier.h"
 
 ButtonPressingDetector *detector;
 etl::imessage_bus *bus;
+assertions::MessageBusVerifier *busVerifier;
 
 void dont_emit_pressing_message_when_it_is_newly_created_and_button_was_released() {
 
@@ -16,18 +18,22 @@ void dont_emit_pressing_message_when_it_is_newly_created_and_button_was_released
     etl::send_message(*bus, upMessage);
 
     // then nothing was emitted to the bus
-    TEST_ASSERT_EQUAL(0, bus->size());
+    assertions::assertThat(busVerifier)
+        .receivedNoMessages();
 }
 
 void setUp() {
     bus = new etl::message_bus<2>();
     detector = new ButtonPressingDetector(*bus);
+    busVerifier = new assertions::MessageBusVerifier();
 
     bus->subscribe(*detector);
+    bus->subscribe(*busVerifier);
 }
 
 void tearDown() {
     delete detector;
+    delete busVerifier;
     delete bus;
 }
 
