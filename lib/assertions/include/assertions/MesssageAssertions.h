@@ -8,6 +8,8 @@
 #include <etl/message.h>
 #include <etl/list.h>
 
+#include "button_messages.h"
+
 namespace assertions {
 
     class MessageAssertions {
@@ -17,6 +19,11 @@ namespace assertions {
         explicit MessageAssertions(etl::ilist<const etl::imessage*> *);
 
         MessageAssertions& receivedNoMessages();
+        MessageAssertions& emittedNumberOfMessages(unsigned int expectedNumberOfMessages);
+        MessageAssertions& emittedMessageType(MessageType expectedMessageType);
+        MessageAssertions& emitted(etl::imessage &expectedMessage);
+
+        MessageAssertions &dumpMessages();
     };
 
 }

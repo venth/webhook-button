@@ -12,7 +12,7 @@
 
 namespace assertions {
 
-    struct SomeMessage : public etl::message<1> {};
+    struct SomeMessage : public etl::message<255> {};
 
     class MessageBusVerifier : public etl::message_router<MessageBusVerifier, SomeMessage> {
     private:
