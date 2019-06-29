@@ -7,6 +7,7 @@
 
 #include <etl/message.h>
 #include <iostream>
+#include <chrono>
 
 enum MessageType {
     BUTTON_UP,
@@ -16,38 +17,70 @@ enum MessageType {
     UNKNOWN,
 };
 
-struct ButtonUpMessage : public etl::message<MessageType::BUTTON_UP> {
+template<const MessageType MT_>
+class BaseMessage : public etl::message<MT_> {
+public:
     unsigned long timestamp;
+
+    explicit BaseMessage(unsigned long timestamp) {
+        this->timestamp = timestamp;
+    }
+};
+
+struct ButtonUpMessage : public BaseMessage<MessageType::BUTTON_UP> {
+
+    explicit ButtonUpMessage(unsigned long timestamp) : BaseMessage(timestamp) {}
+
+    static ButtonUpMessage &of(std::chrono::system_clock::time_point &timestamp) {
+        auto timestampInMillis = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch());
+        auto obj = new ButtonUpMessage(timestampInMillis.count());
+        return *obj;
+    }
 
     static ButtonUpMessage &of(unsigned long timestamp) {
-        auto obj = new ButtonUpMessage();
-        obj->timestamp = timestamp;
+        auto obj = new ButtonUpMessage(timestamp);
         return *obj;
     }
 
 };
 
-struct ButtonDownMessage : public etl::message<MessageType::BUTTON_DOWN> {
-    unsigned long timestamp;
+struct ButtonDownMessage : public BaseMessage<MessageType::BUTTON_DOWN> {
+
+    explicit ButtonDownMessage(unsigned long timestamp) : BaseMessage(timestamp) {}
+
+    static ButtonDownMessage &of(std::chrono::system_clock::time_point &timestamp) {
+        auto timestampInMillis = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch());
+        auto *obj = new ButtonDownMessage(timestampInMillis.count());
+        return *obj;
+    }
 
     static ButtonDownMessage &of(unsigned long timestamp) {
-        auto *obj = new ButtonDownMessage();
-        obj->timestamp = timestamp;
+        auto *obj = new ButtonDownMessage(timestamp);
         return *obj;
     }
 };
 
-struct ButtonPressedMessage : public etl::message<MessageType::BUTTON_PRESSED> {
-    unsigned long timestamp;
+struct ButtonPressedMessage : public BaseMessage<MessageType::BUTTON_PRESSED> {
     unsigned long duration;
 
-    static ButtonPressedMessage &of(unsigned long timestamp, unsigned long duration) {
-        auto *obj = new ButtonPressedMessage();
-        obj->timestamp = timestamp;
-        obj->duration = duration;
+    ButtonPressedMessage(unsigned long timestamp, unsigned long duration) : BaseMessage(0) {
+        this->duration = duration;
+    }
+
+    static ButtonPressedMessage &
+    of(std::chrono::system_clock::time_point &timestamp, std::chrono::milliseconds &duration) {
+        auto timestampInMillis = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch());
+        auto *obj = new ButtonPressedMessage(timestampInMillis.count(), duration.count());
+        return *obj;
+    }
+
+    static ButtonPressedMessage &
+    of(unsigned long timestamp, unsigned long duration) {
+        auto *obj = new ButtonPressedMessage(timestamp, duration);
         return *obj;
     }
 };
+
 
 inline std::ostream &operator<<(std::ostream &os, const etl::imessage &s) {
     switch (s.message_id) {
@@ -94,5 +127,13 @@ inline bool operator==(const etl::imessage &l, const etl::imessage &r) {
     }
 }
 
+
+typedef unsigned long (*TimestampSupplierFunc)();
+
+static unsigned long chronoTimestampSupplier() {
+    auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::high_resolution_clock::now().time_since_epoch());
+    return timestamp.count();
+}
 
 #endif //WEBHOOK_BUTTON_MESSAGES_H

@@ -16,20 +16,29 @@ namespace assertions {
         this->messages = messages;
     }
 
-    MessageAssertions &MessageAssertions::dumpMessages() {
-        std::cout << "Messages: [ ";
+    std::ostream &MessageAssertions::dumpMessages(std::ostream &os) {
+        os << "Messages: [ ";
         for (const auto &message : *this->messages) {
-            std::cout << *message <<" , ";
+            os << *message <<" , ";
         }
-        std::cout << " ]" << std::endl;
+        os << " ]";
 
-        return *this;
+        return os;
     }
 
     MessageAssertions &MessageAssertions::received(etl::imessage &expectedMessage) {
+        bool matched = false;
+
+        for (auto &item : *this->messages) {
+            if (*item == expectedMessage) {
+                matched = true;
+                break;
+            }
+        }
+
         std::ostringstream os;
-        os << "Expected: " << expectedMessage << " Got: " << *this->messages->front();
-        TEST_ASSERT_TRUE_MESSAGE(expectedMessage == *this->messages->front(), os.str().c_str());
+        os << "Expected: " << expectedMessage << " Got: " << *this;
+        TEST_ASSERT_TRUE_MESSAGE(matched, os.str().c_str());
 
         return *this;
     }
@@ -50,6 +59,10 @@ namespace assertions {
         os << "Expected receiving " << count << " messages. Was: " << matched;
         TEST_ASSERT_EQUAL_MESSAGE(count, matched, os.str().c_str());
         return *this;
+    }
+
+    std::ostream &operator<<(std::ostream &os, MessageAssertions s) {
+        return s.dumpMessages(os);
     }
 
 }

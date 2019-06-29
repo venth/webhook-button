@@ -19,13 +19,17 @@ enum ButtonState {
 class ButtonPressingDetector : public etl::fsm {
 private:
     etl::imessage_bus *bus;
-    etl::ifsm_state *states[ButtonState::NUMBER_OF_STATES];
+    etl::ifsm_state **states;
+    TimestampSupplierFunc timestampSupplier;
+    unsigned long downTimestamp;
 public:
     explicit ButtonPressingDetector(etl::imessage_bus &bus);
-    ~ButtonPressingDetector();
+    explicit ButtonPressingDetector(etl::imessage_bus &bus, TimestampSupplierFunc timestampSupplier);
+    ~ButtonPressingDetector() override;
 
     unsigned long currentTimestamp();
-    void emitButtonPressed(unsigned long duration);
+    void emitButtonPressed(unsigned long upTimestamp);
+    void setDownTimestamp(unsigned long downTimestamp);
 };
 
 
