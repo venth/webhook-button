@@ -3,8 +3,8 @@
 //
 
 #include <unity.h>
-#include <iostream>
 #include <sstream>
+#include <iostream>
 
 #include "assertions/MesssageAssertions.h"
 
@@ -14,13 +14,6 @@ namespace assertions {
 
     MessageAssertions::MessageAssertions(etl::ilist<const etl::imessage *> *messages) {
         this->messages = messages;
-    }
-
-    MessageAssertions &MessageAssertions::receivedNoMessages() {
-        std::ostringstream os;
-        os << "Expected receiving none messages. Was: " << this->messages->size();
-        TEST_ASSERT_EQUAL_MESSAGE(0, this->messages->size(), os.str().c_str());
-        return *this;
     }
 
     MessageAssertions &MessageAssertions::dumpMessages() {
@@ -33,25 +26,29 @@ namespace assertions {
         return *this;
     }
 
-    MessageAssertions &MessageAssertions::emittedNumberOfMessages(unsigned int expectedNumberOfMessages) {
-        std::ostringstream os;
-        os << "Expected receiving: " << expectedNumberOfMessages << " messages. Was: " << this->messages->size();
-        TEST_ASSERT_EQUAL_MESSAGE(expectedNumberOfMessages, this->messages->size(), os.str().c_str());
-        return *this;
-    }
-
-    MessageAssertions &MessageAssertions::emittedMessageType(MessageType expectedMessageType) {
-        std::ostringstream os;
-        os << "Expected message type: " << expectedMessageType << ". Was: " << this->messages->front()->message_id;
-        TEST_ASSERT_EQUAL_MESSAGE(expectedMessageType, this->messages->front()->message_id, os.str().c_str());
-        return *this;
-    }
-
-    MessageAssertions &MessageAssertions::emitted(etl::imessage &expectedMessage) {
+    MessageAssertions &MessageAssertions::received(etl::imessage &expectedMessage) {
         std::ostringstream os;
         os << "Expected: " << expectedMessage << " Got: " << *this->messages->front();
         TEST_ASSERT_TRUE_MESSAGE(expectedMessage == *this->messages->front(), os.str().c_str());
 
+        return *this;
+    }
+
+    MessageAssertions &MessageAssertions::receivedNoMessagesOfType(MessageType expectedMessageType) {
+        return this->receivedMessagesOfType(0, expectedMessageType);
+    }
+
+    MessageAssertions &MessageAssertions::receivedMessagesOfType(long count, MessageType expectedMessageType) {
+        long matched = false;
+        for (const auto &item : *this->messages) {
+            if (item->message_id == expectedMessageType) {
+                matched++;
+            }
+        }
+
+        std::ostringstream os;
+        os << "Expected receiving " << count << " messages. Was: " << matched;
+        TEST_ASSERT_EQUAL_MESSAGE(count, matched, os.str().c_str());
         return *this;
     }
 

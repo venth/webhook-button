@@ -12,14 +12,11 @@ assertions::MessageBusVerifier *busVerifier;
 void dont_emit_pressed_message_when_it_is_newly_created_and_button_is_up() {
 
     // when button is up
-    ButtonUpMessage upMessage;
-    upMessage.timestamp = 10;
-    etl::send_message(*bus, upMessage);
+    etl::send_message(*bus, ButtonUpMessage::of(10));
 
-    // then nothing was emitted to the bus
+    // then nothing was received to the bus
     assertions::assertThat(busVerifier)
-        .dumpMessages()
-        .receivedNoMessages();
+        .receivedNoMessagesOfType(MessageType::BUTTON_PRESSED);
 }
 
 void dont_emit_pressed_message_when_it_is_newly_created_and_button_is_down() {
@@ -27,9 +24,9 @@ void dont_emit_pressed_message_when_it_is_newly_created_and_button_is_down() {
     // when button is down
     etl::send_message(*bus, ButtonDownMessage::of(10));
 
-    // then nothing was emitted to the bus
+    // then nothing was received to the bus
     assertions::assertThat(busVerifier)
-            .receivedNoMessages();
+            .receivedNoMessagesOfType(MessageType::BUTTON_PRESSED);
 }
 
 void emits_pressed_message_when_button_is_released_after_first_is_down() {
@@ -41,8 +38,7 @@ void emits_pressed_message_when_button_is_released_after_first_is_down() {
 
     // then emits pressed message
     assertions::assertThat(busVerifier)
-            .emittedNumberOfMessages(1)
-            .emittedMessageType(MessageType::BUTTON_PRESSED);
+            .receivedMessagesOfType(1, MessageType::BUTTON_PRESSED);
 
 }
 
@@ -55,8 +51,8 @@ void calculates_duration_of_pressed_message_between_time_when_button_is_up_and_f
 
     // then calculates duration of pressed message between up and first down message appearance
     assertions::assertThat(busVerifier)
-            .emittedNumberOfMessages(1)
-            .emitted(ButtonPressedMessage::of(10, 10));
+            .receivedMessagesOfType(1, MessageType::BUTTON_PRESSED)
+            .received(ButtonPressedMessage::of(10, 10));
 
 }
 
@@ -65,7 +61,7 @@ void setUp() {
     detector = new ButtonPressingDetector(*bus);
     busVerifier = new assertions::MessageBusVerifier();
 
-    bus->subscribe(*detector);
+//    bus->subscribe(*detector);
     bus->subscribe(*busVerifier);
 }
 

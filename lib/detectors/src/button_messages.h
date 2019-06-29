@@ -12,6 +12,8 @@ enum MessageType {
     BUTTON_UP,
     BUTTON_DOWN,
     BUTTON_PRESSED,
+
+    UNKNOWN,
 };
 
 struct ButtonUpMessage : public etl::message<MessageType::BUTTON_UP> {

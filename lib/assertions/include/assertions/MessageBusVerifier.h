@@ -12,7 +12,7 @@
 
 namespace assertions {
 
-    struct SomeMessage : public etl::message<255> {};
+    struct SomeMessage : public etl::message<MessageType::UNKNOWN> {};
 
     class MessageBusVerifier : public etl::message_router<MessageBusVerifier, SomeMessage> {
     private:
@@ -23,8 +23,10 @@ namespace assertions {
 
         MessageAssertions& assertThat();
 
-        void on_receive(etl::imessage_router& sender, const SomeMessage& msg);
+        bool accepts(etl::message_id_t id) const override;
 
+        void on_receive(etl::imessage_router& sender, const ButtonUpMessage& msg);
+        void on_receive(etl::imessage_router& sender, const SomeMessage& msg);
         void on_receive_unknown(etl::imessage_router& sender, const etl::imessage& msg);
     };
 

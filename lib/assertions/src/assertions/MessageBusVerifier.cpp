@@ -3,11 +3,12 @@
 //
 
 #include "assertions/MessageBusVerifier.h"
+#include <etl/message_router.h>
 
 
 namespace assertions {
 
-    MessageBusVerifier::MessageBusVerifier() : message_router(0) {
+    MessageBusVerifier::MessageBusVerifier() : message_router(1) {
         this->messages = new etl::list<const etl::imessage *, 40>();
     }
 
@@ -26,6 +27,14 @@ namespace assertions {
 
     void MessageBusVerifier::on_receive_unknown(etl::imessage_router &sender, const etl::imessage &msg) {
         this->messages->push_back(&msg);
+    }
+
+    void MessageBusVerifier::on_receive(etl::imessage_router &sender, const ButtonUpMessage &msg) {
+        this->messages->push_back(&msg);
+    }
+
+    bool MessageBusVerifier::accepts(etl::message_id_t id) const {
+        return true;
     }
 
     MessageAssertions &assertThat(MessageBusVerifier &busVerifier) {

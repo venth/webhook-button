@@ -18,10 +18,10 @@ namespace assertions {
     public:
         explicit MessageAssertions(etl::ilist<const etl::imessage*> *);
 
-        MessageAssertions& receivedNoMessages();
-        MessageAssertions& emittedNumberOfMessages(unsigned int expectedNumberOfMessages);
+        MessageAssertions& receivedNoMessagesOfType(MessageType expectedMessageType);
+        MessageAssertions& receivedMessagesOfType(long count, MessageType expectedMessageType);
         MessageAssertions& emittedMessageType(MessageType expectedMessageType);
-        MessageAssertions& emitted(etl::imessage &expectedMessage);
+        MessageAssertions& received(etl::imessage &expectedMessage);
 
         MessageAssertions &dumpMessages();
     };

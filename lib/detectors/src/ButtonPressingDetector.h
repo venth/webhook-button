@@ -5,22 +5,27 @@
 #ifndef WEBHOOK_BUTTON_BUTTONPRESSINGDETECTOR_H
 #define WEBHOOK_BUTTON_BUTTONPRESSINGDETECTOR_H
 
-#include <etl/message_router.h>
+#include <etl/fsm.h>
 #include <etl/message_bus.h>
 
 #include "button_messages.h"
 
-class ButtonPressingDetector : public etl::message_router<ButtonPressingDetector, ButtonUpMessage, ButtonDownMessage> {
+enum ButtonState {
+    UP_STATE,
+    DOWN_STATE,
+    NUMBER_OF_STATES,
+};
+
+class ButtonPressingDetector : public etl::fsm {
 private:
     etl::imessage_bus *bus;
-
+    etl::ifsm_state *states[ButtonState::NUMBER_OF_STATES];
 public:
     explicit ButtonPressingDetector(etl::imessage_bus &bus);
+    ~ButtonPressingDetector();
 
-    void on_receive(etl::imessage_router& sender, const ButtonUpMessage& msg);
-    void on_receive(etl::imessage_router& sender, const ButtonDownMessage& msg);
-
-    void on_receive_unknown(etl::imessage_router& sender, const etl::imessage& msg);
+    unsigned long currentTimestamp();
+    void emitButtonPressed(unsigned long duration);
 };
 
 
