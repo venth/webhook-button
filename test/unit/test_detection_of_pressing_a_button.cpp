@@ -54,7 +54,28 @@ void calculates_duration_of_pressed_message_between_time_when_button_is_up_and_f
     assertions::assertThat(busVerifier)
             .receivedMessagesOfType(1, MessageType::BUTTON_PRESSED)
             .received(ButtonPressedMessage::of(10, 20));
+}
 
+void calculates_duration_of_pressed_message_between_time_when_button_is_up_and_first_occurrence_when_button_was_down_despite_of_many_down_after_first() {
+    // given button is down
+    etl::send_message(*bus, ButtonDownMessage::of(10));
+
+    // and button is down
+    etl::send_message(*bus, ButtonDownMessage::of(12));
+
+    // and button is down
+    etl::send_message(*bus, ButtonDownMessage::of(14));
+
+    // and button is down
+    etl::send_message(*bus, ButtonDownMessage::of(20));
+
+    // when button is up
+    etl::send_message(*bus, ButtonUpMessage::of(30));
+
+    // then calculates duration of pressed message between up and first down message appearance
+    assertions::assertThat(busVerifier)
+            .receivedMessagesOfType(1, MessageType::BUTTON_PRESSED)
+            .received(ButtonPressedMessage::of(10, 20));
 }
 
 void setUp() {
@@ -79,6 +100,7 @@ void execute_tests() {
     RUN_TEST(dont_emit_pressed_message_when_it_is_newly_created_and_button_is_down);
     RUN_TEST(emits_pressed_message_when_button_is_released_after_first_is_down);
     RUN_TEST(calculates_duration_of_pressed_message_between_time_when_button_is_up_and_first_occurrence_when_button_was_down);
+    RUN_TEST(calculates_duration_of_pressed_message_between_time_when_button_is_up_and_first_occurrence_when_button_was_down_despite_of_many_down_after_first);
 
     UNITY_END();
 }

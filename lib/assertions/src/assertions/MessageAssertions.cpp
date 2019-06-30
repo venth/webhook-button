@@ -32,6 +32,13 @@ namespace assertions {
                 .append(message_to_string(expectedMessage))
                 .append(" Got: ");
 
+        for (auto &item : *this->messages) {
+            msg
+                    .append(message_to_string(*item))
+                    .append(", ");
+        }
+
+
         TEST_ASSERT_TRUE_MESSAGE(matched, msg.c_str());
 
         return *this;
@@ -56,6 +63,13 @@ namespace assertions {
         msg.append(" messages. Was: ");
         sprintf(buffer, "%ld", matched);
         msg.append(buffer);
+        msg.append(" Collected messages: ");
+        for (auto &item : *this->messages) {
+            msg
+                    .append(message_to_string(*item))
+                    .append(", ");
+        }
+
         TEST_ASSERT_EQUAL_MESSAGE(count, matched, msg.c_str());
         return *this;
     }

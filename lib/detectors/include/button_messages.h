@@ -97,7 +97,7 @@ struct ButtonPressedMessage : public BaseMessage<MessageType::BUTTON_PRESSED> {
 };
 
 
-inline std::string &message_to_string(const etl::imessage &s) {
+inline std::string message_to_string(const etl::imessage &s) {
     char buffer[50];
     sprintf(buffer, "%d", s.message_id);
     auto msgId = std::string(buffer);
