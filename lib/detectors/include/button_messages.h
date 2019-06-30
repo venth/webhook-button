@@ -14,7 +14,7 @@ enum MessageType {
     BUTTON_DOWN,
     BUTTON_PRESSED,
 
-    UNKNOWN,
+    LOOP_INITIATED,
 };
 
 template<const MessageType MT_>
@@ -24,6 +24,21 @@ public:
 
     explicit BaseMessage(unsigned long timestamp) {
         this->timestamp = timestamp;
+    }
+};
+
+struct LoopInitiatedMessage : public BaseMessage<MessageType::LOOP_INITIATED> {
+    explicit LoopInitiatedMessage(unsigned long timestamp) : BaseMessage(timestamp) {}
+
+    static LoopInitiatedMessage &of(std::chrono::system_clock::time_point &timestamp) {
+        auto timestampInMillis = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch());
+        auto obj = new LoopInitiatedMessage(timestampInMillis.count());
+        return *obj;
+    }
+
+    static LoopInitiatedMessage &of(unsigned long timestamp) {
+        auto obj = new LoopInitiatedMessage(timestamp);
+        return *obj;
     }
 };
 
@@ -90,6 +105,16 @@ inline std::string &message_to_string(const etl::imessage &s) {
     std::string duration = "";
     std::string os = "";
     switch (s.message_id) {
+        case MessageType::LOOP_INITIATED:
+            sprintf(buffer, "%ld", reinterpret_cast<const LoopInitiatedMessage *>(&s)->timestamp);
+            timestamp = std::string(buffer);
+            return os
+                    .append("LoopInitiatedMessage { message_id: ")
+                    .append(msgId)
+                    .append(", timestamp: ")
+                    .append(timestamp)
+                    .append(" }");
+
         case MessageType::BUTTON_UP:
             sprintf(buffer, "%ld", reinterpret_cast<const ButtonUpMessage *>(&s)->timestamp);
             timestamp = std::string(buffer);
@@ -133,6 +158,10 @@ inline bool operator==(const etl::imessage &l, const etl::imessage &r) {
         return false;
     }
     switch (l.message_id) {
+        case MessageType::LOOP_INITIATED:
+            return reinterpret_cast<const ButtonUpMessage *>(&l)->timestamp ==
+                   reinterpret_cast<const ButtonUpMessage *>(&r)->timestamp;
+
         case MessageType::BUTTON_UP:
             return reinterpret_cast<const ButtonUpMessage *>(&l)->timestamp ==
                    reinterpret_cast<const ButtonUpMessage *>(&r)->timestamp;
@@ -149,6 +178,12 @@ inline bool operator==(const etl::imessage &l, const etl::imessage &r) {
         default:
             return false;
     }
+}
+
+inline unsigned long nowInMills() {
+    auto timestamp = std::chrono::high_resolution_clock::now();
+    auto timestampInMillis = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch());
+    return timestampInMillis.count();
 }
 
 #endif //WEBHOOK_BUTTON_MESSAGES_H

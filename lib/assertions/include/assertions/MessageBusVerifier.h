@@ -12,7 +12,7 @@
 
 namespace assertions {
 
-    struct SomeMessage : public etl::message<MessageType::UNKNOWN> {};
+    struct SomeMessage : public etl::message<MessageType::LOOP_INITIATED> {};
 
     class MessageBusVerifier : public etl::message_router<MessageBusVerifier, SomeMessage> {
     private:

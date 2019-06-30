@@ -20,7 +20,7 @@ class ButtonPressingDetector : public etl::fsm {
 private:
     etl::imessage_bus *bus;
     etl::ifsm_state **states;
-    unsigned long downTimestamp;
+    unsigned long downTimestamp{};
 public:
     explicit ButtonPressingDetector(etl::imessage_bus &bus);
     ~ButtonPressingDetector() override;

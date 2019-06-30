@@ -40,6 +40,7 @@ void setup() {
     ESPserial.println("AT+GMR");
 
 // ***   End of additional code
+/*
     unsigned long startedAt = millis();
 
     WiFi.printDiag(Serial); //Remove this line if you do not want to see WiFi password printed
@@ -81,10 +82,15 @@ void setup() {
         Serial.print("local ip: ");
         Serial.println(WiFi.localIP());
     }
+*/
+    pinMode(D2, INPUT);
 }
 
 void loop() {
     if (!WORKING_PROGRAM) {
         return;
     }
+
+    Serial.print("PIN READ: ");
+    Serial.println(digitalRead(D2));
 }

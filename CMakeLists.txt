@@ -63,4 +63,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(${PROJECT_NAME} ${SRC_LIST})
+add_executable(${PROJECT_NAME} ${SRC_LIST} lib/detectors/src/hardware/ButtonHardwareDetector.cpp lib/detectors/include/hardware/ButtonHardwareDetector.h test/nodemcuv2/test_emission_of_up_message_when_pin_indicates_it.cpp)
