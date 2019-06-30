@@ -6,8 +6,8 @@
 #define WEBHOOK_BUTTON_MESSAGES_H
 
 #include <etl/message.h>
-#include <iostream>
 #include <chrono>
+#include <string>
 
 enum MessageType {
     BUTTON_UP,
@@ -82,25 +82,49 @@ struct ButtonPressedMessage : public BaseMessage<MessageType::BUTTON_PRESSED> {
 };
 
 
-inline std::ostream &operator<<(std::ostream &os, const etl::imessage &s) {
+inline std::string &message_to_string(const etl::imessage &s) {
+    char buffer[50];
+    sprintf(buffer, "%d", s.message_id);
+    auto msgId = std::string(buffer);
+    std::string timestamp = "";
+    std::string duration = "";
+    std::string os = "";
     switch (s.message_id) {
         case MessageType::BUTTON_UP:
-            return (os << "ButtonUpMessage { message_id: " << atoi((const char *) &(s.message_id)) << ", timestamp: "
-                       << reinterpret_cast<const ButtonUpMessage *>(&s)->timestamp << " }");
+            sprintf(buffer, "%ld", reinterpret_cast<const ButtonUpMessage *>(&s)->timestamp);
+            timestamp = std::string(buffer);
+            return os
+                    .append("ButtonUpMessage { message_id: ")
+                    .append(msgId)
+                    .append(", timestamp: ")
+                    .append(timestamp)
+                    .append(" }");
 
         case MessageType::BUTTON_DOWN:
-            return (os << "ButtonDownMessage { message_id: " << atoi((const char *) &(s.message_id)) << ", timestamp: "
-                       << reinterpret_cast<const ButtonDownMessage *>(&s)->timestamp << " }");
+            sprintf(buffer, "%ld", reinterpret_cast<const ButtonDownMessage *>(&s)->timestamp);
+            timestamp = std::string(buffer);
+            return os
+                    .append("ButtonDownMessage { message_id: ")
+                    .append(msgId)
+                    .append(", timestamp: ")
+                    .append(timestamp)
+                    .append(" }");
 
         case MessageType::BUTTON_PRESSED:
-            return (os << "ButtonPressedMessage { message_id: " << atoi((const char *) &(s.message_id))
-                       << ", timstamp: "
-                       << reinterpret_cast<const ButtonPressedMessage *>(&s)->timestamp
-                       << ", duration: "
-                       << reinterpret_cast<const ButtonPressedMessage *>(&s)->duration
-                       << " }");
+            sprintf(buffer, "%ld", reinterpret_cast<const ButtonPressedMessage *>(&s)->timestamp);
+            timestamp = std::string(buffer);
+            sprintf(buffer, "%ld", reinterpret_cast<const ButtonPressedMessage *>(&s)->duration);
+            duration = std::string(buffer);
+            return os
+                    .append("ButtonPressedMessage { message_id: ")
+                    .append(msgId)
+                    .append(", timstamp: ")
+                    .append(timestamp)
+                    .append(", duration: ")
+                    .append(duration)
+                    .append(" }");
         default:
-            return os;
+            return os.append("");
     }
 }
 
@@ -125,15 +149,6 @@ inline bool operator==(const etl::imessage &l, const etl::imessage &r) {
         default:
             return false;
     }
-}
-
-
-typedef unsigned long (*TimestampSupplierFunc)();
-
-static unsigned long chronoTimestampSupplier() {
-    auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::high_resolution_clock::now().time_since_epoch());
-    return timestamp.count();
 }
 
 #endif //WEBHOOK_BUTTON_MESSAGES_H

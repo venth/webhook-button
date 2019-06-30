@@ -1,6 +1,7 @@
 #include <unity.h>
 
 #include <etl/message_bus.h>
+#include "button_messages.h"
 
 #include "ButtonPressingDetector.h"
 #include "assertions/MessageBusVerifier.h"
@@ -56,12 +57,6 @@ void calculates_duration_of_pressed_message_between_time_when_button_is_up_and_f
 
 }
 
-static unsigned long constStepTimestampSupplier() {
-    static unsigned long initial;
-    initial += 10;
-    return initial;
-}
-
 void setUp() {
     bus = new etl::message_bus<2>();
     detector = new ButtonPressingDetector(*bus);
@@ -83,8 +78,7 @@ void execute_tests() {
     RUN_TEST(dont_emit_pressed_message_when_it_is_newly_created_and_button_is_up);
     RUN_TEST(dont_emit_pressed_message_when_it_is_newly_created_and_button_is_down);
     RUN_TEST(emits_pressed_message_when_button_is_released_after_first_is_down);
-    RUN_TEST(
-            calculates_duration_of_pressed_message_between_time_when_button_is_up_and_first_occurrence_when_button_was_down);
+    RUN_TEST(calculates_duration_of_pressed_message_between_time_when_button_is_up_and_first_occurrence_when_button_was_down);
 
     UNITY_END();
 }
@@ -92,9 +86,21 @@ void execute_tests() {
 
 #ifdef ARDUINO
 
+#include <FS.h>                   //this needs to be first, or it all crashes and burns...
 #include <Arduino.h>
+#include <SoftwareSerial.h>
+
+SoftwareSerial ESPserial(2, 3); // RX | TX
 
 void setup() {
+    //   ***  Additional Code that fixed my problem  ****
+    Serial.begin(9600);
+    ESPserial.begin(9600);
+    delay(1000);
+
+    Serial.println("Ready");
+    ESPserial.println("AT+GMR");
+
     execute_tests();
 }
 

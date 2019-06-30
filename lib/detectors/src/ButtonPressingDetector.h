@@ -2,8 +2,8 @@
 // Created by Artur Krysiak on 2019-06-25.
 //
 
-#ifndef WEBHOOK_BUTTON_BUTTONPRESSINGDETECTOR_H
-#define WEBHOOK_BUTTON_BUTTONPRESSINGDETECTOR_H
+#ifndef WEBHOOK_BUTTON_BUTTONPRESSINGDETECTOR_HA
+#define WEBHOOK_BUTTON_BUTTONPRESSINGDETECTOR_HA
 
 #include <etl/fsm.h>
 #include <etl/message_bus.h>
@@ -20,11 +20,9 @@ class ButtonPressingDetector : public etl::fsm {
 private:
     etl::imessage_bus *bus;
     etl::ifsm_state **states;
-    TimestampSupplierFunc timestampSupplier;
     unsigned long downTimestamp;
 public:
     explicit ButtonPressingDetector(etl::imessage_bus &bus);
-    explicit ButtonPressingDetector(etl::imessage_bus &bus, TimestampSupplierFunc timestampSupplier);
     ~ButtonPressingDetector() override;
 
     unsigned long currentTimestamp();
@@ -33,4 +31,4 @@ public:
 };
 
 
-#endif //WEBHOOK_BUTTON_BUTTONPRESSINGDETECTOR_H
+#endif //WEBHOOK_BUTTON_BUTTONPRESSINGDETECTOR_HA

@@ -114,6 +114,85 @@ When the webhook button is pushed then it calls the configured url accordingly t
     Ambiguous stl functions issue was caused by wrongly prepared `etl_profile.h` file. Currently instead of using direct include of
     a specific profile just add `#define PROFILE_XXX`
 
+* `pio test -e nodemcuv2` ended up with unknown error
+
+    The error: 
+    ```
+    ets Jan  8 2013,rst cause:2, boot mode:(3,6)
+    load 0x4010f000, len 1384, room 16
+    tail 8
+    chksum 0x2d
+    csum 0x2d
+    v8b899c12
+    ~ld
+    ```
+    
+    To nail down the issue a test that only passes was used along with commented out code.
+    By enabling small part of the code appeared that first couse was usage of: `#include <iostream>` 
+    Removal of usage of the `iostream` made the test to pass.
+    
+    Searching continues.
+    
+    Now the issue looks like that:
+    
+    ```
+    Exception (3):
+    epc1=0x4021a780 epc2=0x00000000 epc3=0x00000000 excvaddr=0x40254930 depc=0x00000000
+    >>>stack>>>
+    ctx: cont
+    sp: 3ffffbb0 end: 3fffffc0 offset: 01a0
+    3ffffd50:  feefeffe feefeffe feefeffe 4021a889
+    3ffffd60:  00000000 4020babb 00000050 40204b24
+    3ffffd70:  feefeffe 3ffef930 00000007 4020bcf8
+    3ffffd80:  00000000 00000000 feff00ff 402215bc
+    3ffffd90:  00000001 00000006 4025493c 40254974
+    3ffffda0:  00000001 feefeffe feefeffe 4021b1dc
+    3ffffdb0:  feefeffe feefeffe feefeffe 4021b1fa
+    3ffffdc0:  00000001 00000000 3ffef8a0 40254974
+    3ffffdd0:  4025493c 00000000 3ffefea0 40223334
+    3ffffde0:  3ffefea0 3ffffdf0 3ffef640 3ffef6e8
+    3ffffdf0:  00000000 00000000 00000000 00000000
+    3ffffe00:  00000000 feefeffe feefeffe 3ffef1cc
+    3ffffe10:  00000010 3ffffeac 3ffffeac 3ffef1cc
+    3ffffe20:  00000010 3fffff18 00000000 40214254
+    3ffffe30:  3fff01c4 feefeffe 3ffffeac 40212a22
+    3ffffe40:  feefeffe 00000000 3ffffeac 40212a70
+    3ffffe50:  feefeffe 3ffffeac 3ffffe80 40212570
+    3ffffe60:  feefeffe feefeffe 3ffffe80 40213047
+    3ffffe70:  3fff1cac 00000000 00000000 4020273d
+    3ffffe80:  3ffe8b1c feefeffe feefeffe feefeffe
+    3ffffe90:  feefeffe feefeffe 3ffe85d0 3ffeef50
+    3ffffea0:  05190699 0518e78a 40203394 3ffe8b30
+    3ffffeb0:  00000006 00000000 00001002 00000000
+    3ffffec0:  00000000 00000000 00000000 00000000
+    3ffffed0:  00000000 00000000 00000000 00000000
+    3ffffee0:  00000000 00000000 00000000 00000000
+    3ffffef0:  00000000 00000000 00000000 00000000
+    3fffff00:  00000000 00000000 00000000 00000000
+    3fffff10:  00000008 3ffffed0 3fff01c4 00000000
+    3fffff20:  00000000 00000000 00000000 00000000
+    3fffff30:  00000000 00000000 3fff1c4c 40202983
+    3fffff40:  00002580 3ffef0c0 3fff1c4c 402027a0
+    3fffff50:  0001c200 0000001c 3fff1c4c 40201820
+    3fffff60:  00002580 3ffef0c0 3ffeef50 402013ed
+    3fffff70:  402017f0 3ffef1cc 3ffeef50 4020142c
+    3fffff80:  4020397e 000003e8 3ffeef50 40201a23
+    3fffff90:  feefeffe 3ffef0c0 3ffeef50 40201aae
+    3fffffa0:  3fffdad0 00000000 3ffef19c 4020343c
+    3fffffb0:  feefeffe feefeffe 3ffe85d0 40100bb1
+    <<<stack<<<
+    ets Jan  8 2013,rst cause:2, boot mode:(3,7)
+    load 0x4010f000, len 1384, room 16
+    tail 8
+    chksum 0x2d
+    csum 0x2d
+    v8b899c12
+    ~ld
+    ```
+    
+    Nailing down the issue lead to `std::ostringstream` and `#include <sstream>`. The solution is
+    to replace `sstream` with `combination of std::string and sprintf`.
+
 # Appendix
 ## Lectures
 * [Setup CLion and Arduino](https://www.instructables.com/id/Setup-JetBrains-Clion-for-Arduino-Development/)

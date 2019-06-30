@@ -4,7 +4,7 @@
 
 #include <unity.h>
 #include <sstream>
-#include <iostream>
+#include <string>
 
 #include "assertions/MesssageAssertions.h"
 
@@ -14,16 +14,6 @@ namespace assertions {
 
     MessageAssertions::MessageAssertions(etl::ilist<const etl::imessage *> *messages) {
         this->messages = messages;
-    }
-
-    std::ostream &MessageAssertions::dumpMessages(std::ostream &os) {
-        os << "Messages: [ ";
-        for (const auto &message : *this->messages) {
-            os << *message <<" , ";
-        }
-        os << " ]";
-
-        return os;
     }
 
     MessageAssertions &MessageAssertions::received(etl::imessage &expectedMessage) {
@@ -36,9 +26,13 @@ namespace assertions {
             }
         }
 
-        std::ostringstream os;
-        os << "Expected: " << expectedMessage << " Got: " << *this;
-        TEST_ASSERT_TRUE_MESSAGE(matched, os.str().c_str());
+        std::string msg;
+        msg
+                .append("Expected: ")
+                .append(message_to_string(expectedMessage))
+                .append(" Got: ");
+
+        TEST_ASSERT_TRUE_MESSAGE(matched, msg.c_str());
 
         return *this;
     }
@@ -55,14 +49,14 @@ namespace assertions {
             }
         }
 
-        std::ostringstream os;
-        os << "Expected receiving " << count << " messages. Was: " << matched;
-        TEST_ASSERT_EQUAL_MESSAGE(count, matched, os.str().c_str());
+        char buffer[40];
+        std::string msg = "Expected receiving ";
+        sprintf(buffer, "%ld", count);
+        msg.append(buffer);
+        msg.append(" messages. Was: ");
+        sprintf(buffer, "%ld", matched);
+        msg.append(buffer);
+        TEST_ASSERT_EQUAL_MESSAGE(count, matched, msg.c_str());
         return *this;
     }
-
-    std::ostream &operator<<(std::ostream &os, MessageAssertions s) {
-        return s.dumpMessages(os);
-    }
-
 }

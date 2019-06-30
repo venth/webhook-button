@@ -7,18 +7,12 @@
 
 #define ETL_VERBOSE_ERRORS
 #define ETL_CHECK_PUSH_POP
-
-#if defined(ARDUINO)
-
-//#define ETL_NO_STL
+#define ETL_NULLPTR_INCLUDED
 #define PROFILE_CPP17_GENERIC
 
-#else
+#if !defined(ARDUINO)
 
 #define ETL_THROW_EXCEPTIONS
-#define ETL_NULLPTR_INCLUDED
-
-#define PROFILE_CPP17_GENERIC
 
 #endif
 

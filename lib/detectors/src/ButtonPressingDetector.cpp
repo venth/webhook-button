@@ -7,6 +7,8 @@
 
 class UpState : public etl::fsm_state<ButtonPressingDetector, UpState, ButtonState::UP_STATE, ButtonDownMessage> {
 public:
+    virtual ~UpState() = default;
+
     etl::fsm_state_id_t on_event(etl::imessage_router &sender, const ButtonDownMessage &event) {
         get_fsm_context().setDownTimestamp(event.timestamp);
         return ButtonState::DOWN_STATE;
@@ -19,6 +21,8 @@ public:
 
 class DownState : public etl::fsm_state<ButtonPressingDetector, DownState, ButtonState::DOWN_STATE, ButtonUpMessage> {
 public:
+    virtual ~DownState() = default;
+
     etl::fsm_state_id_t on_event(etl::imessage_router &sender, const ButtonUpMessage &event) {
         get_fsm_context().emitButtonPressed(event.timestamp);
         return ButtonState::UP_STATE;
@@ -30,17 +34,6 @@ public:
 };
 
 ButtonPressingDetector::ButtonPressingDetector(etl::imessage_bus &bus) : fsm(1) {
-    this->timestampSupplier = chronoTimestampSupplier;
-    this->bus = &bus;
-    this->states = new etl::ifsm_state *[ButtonState::NUMBER_OF_STATES];
-    this->states[0] = new UpState();
-    this->states[1] = new DownState();
-    this->set_states(this->states, ButtonState::NUMBER_OF_STATES);
-    this->start(false);
-}
-
-ButtonPressingDetector::ButtonPressingDetector(etl::imessage_bus &bus, TimestampSupplierFunc timestampSupplier) : fsm(1) {
-    this->timestampSupplier = timestampSupplier;
     this->bus = &bus;
     this->states = new etl::ifsm_state *[ButtonState::NUMBER_OF_STATES];
     this->states[0] = new UpState();
@@ -56,7 +49,9 @@ ButtonPressingDetector::~ButtonPressingDetector() {
 }
 
 unsigned long ButtonPressingDetector::currentTimestamp() {
-    return this->timestampSupplier();
+    auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::high_resolution_clock::now().time_since_epoch());
+    return timestamp.count();
 }
 
 void ButtonPressingDetector::emitButtonPressed(unsigned long upTimestamp) {
