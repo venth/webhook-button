@@ -6,7 +6,7 @@
 #include "hardware/ButtonHardwareDetector.h"
 #include "assertions/MessageBusVerifier.h"
 
-ButtonHardwareDetector *detector;
+ButtonHardwareDetector *inLoopProcessor;
 etl::imessage_bus *bus;
 assertions::MessageBusVerifier *busVerifier;
 
@@ -37,10 +37,10 @@ void test_emits_DOWN_MESSAGE_when_pin_indicates_that_button_is_down() {
 
 void setUp() {
     bus = new etl::message_bus<2>();
-    detector = new ButtonHardwareDetector(*bus);
+    inLoopProcessor = new ButtonHardwareDetector(*bus);
     busVerifier = new assertions::MessageBusVerifier();
 
-    bus->subscribe(*detector);
+    bus->subscribe(*inLoopProcessor);
     bus->subscribe(*busVerifier);
 }
 

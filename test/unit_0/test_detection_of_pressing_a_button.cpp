@@ -6,11 +6,11 @@
 #include "ButtonPressingDetector.h"
 #include "assertions/MessageBusVerifier.h"
 
-ButtonPressingDetector *detector;
+ButtonPressingDetector *inLoopProcessor;
 etl::imessage_bus *bus;
 assertions::MessageBusVerifier *busVerifier;
 
-void dont_emit_pressed_message_when_it_is_newly_created_and_button_is_up() {
+void emits_loop_initiated_message_every_time_during_loop_iteration() {
 
     // when button is up
     etl::send_message(*bus, ButtonUpMessage::of(10));
@@ -80,15 +80,15 @@ void calculates_duration_of_pressed_message_between_time_when_button_is_up_and_f
 
 void setUp() {
     bus = new etl::message_bus<2>();
-    detector = new ButtonPressingDetector(*bus);
+    inLoopProcessor = new ButtonPressingDetector(*bus);
     busVerifier = new assertions::MessageBusVerifier();
 
-    bus->subscribe(*detector);
+    bus->subscribe(*inLoopProcessor);
     bus->subscribe(*busVerifier);
 }
 
 void tearDown() {
-    delete detector;
+    delete inLoopProcessor;
     delete busVerifier;
     delete bus;
 }
@@ -96,7 +96,7 @@ void tearDown() {
 void execute_tests() {
     UNITY_BEGIN();
 
-    RUN_TEST(dont_emit_pressed_message_when_it_is_newly_created_and_button_is_up);
+    RUN_TEST(emits_loop_initiated_message_every_time_during_loop_iteration);
     RUN_TEST(dont_emit_pressed_message_when_it_is_newly_created_and_button_is_down);
     RUN_TEST(emits_pressed_message_when_button_is_released_after_first_is_down);
     RUN_TEST(calculates_duration_of_pressed_message_between_time_when_button_is_up_and_first_occurrence_when_button_was_down);
