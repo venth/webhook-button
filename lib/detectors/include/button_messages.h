@@ -15,6 +15,7 @@ enum MessageType {
     BUTTON_PRESSED,
 
     LOOP_INITIATED,
+    WEBHOOK_CALL_REQUESTED,
 };
 
 template<const MessageType MT_>
@@ -24,6 +25,21 @@ public:
 
     explicit BaseMessage(unsigned long timestamp) {
         this->timestamp = timestamp;
+    }
+};
+
+struct WebHookCallRequestedMessage : public BaseMessage<MessageType::WEBHOOK_CALL_REQUESTED> {
+    explicit WebHookCallRequestedMessage(unsigned long timestamp) : BaseMessage(timestamp) {}
+
+    static WebHookCallRequestedMessage &of(std::chrono::system_clock::time_point &timestamp) {
+        auto timestampInMillis = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch());
+        auto obj = new WebHookCallRequestedMessage(timestampInMillis.count());
+        return *obj;
+    }
+
+    static WebHookCallRequestedMessage &of(unsigned long timestamp) {
+        auto obj = new WebHookCallRequestedMessage(timestamp);
+        return *obj;
     }
 };
 
@@ -105,6 +121,16 @@ inline std::string message_to_string(const etl::imessage &s) {
     std::string duration = "";
     std::string os = "";
     switch (s.message_id) {
+        case MessageType::WEBHOOK_CALL_REQUESTED:
+            sprintf(buffer, "%ld", reinterpret_cast<const LoopInitiatedMessage *>(&s)->timestamp);
+            timestamp = std::string(buffer);
+            return os
+                    .append("WebHookCallRequested { message_id: ")
+                    .append(msgId)
+                    .append(", timestamp: ")
+                    .append(timestamp)
+                    .append(" }");
+
         case MessageType::LOOP_INITIATED:
             sprintf(buffer, "%ld", reinterpret_cast<const LoopInitiatedMessage *>(&s)->timestamp);
             timestamp = std::string(buffer);
@@ -158,9 +184,13 @@ inline bool operator==(const etl::imessage &l, const etl::imessage &r) {
         return false;
     }
     switch (l.message_id) {
+        case MessageType::WEBHOOK_CALL_REQUESTED:
+            return reinterpret_cast<const WebHookCallRequestedMessage *>(&l)->timestamp ==
+                   reinterpret_cast<const WebHookCallRequestedMessage *>(&r)->timestamp;
+
         case MessageType::LOOP_INITIATED:
-            return reinterpret_cast<const ButtonUpMessage *>(&l)->timestamp ==
-                   reinterpret_cast<const ButtonUpMessage *>(&r)->timestamp;
+            return reinterpret_cast<const LoopInitiatedMessage *>(&l)->timestamp ==
+                   reinterpret_cast<const LoopInitiatedMessage *>(&r)->timestamp;
 
         case MessageType::BUTTON_UP:
             return reinterpret_cast<const ButtonUpMessage *>(&l)->timestamp ==

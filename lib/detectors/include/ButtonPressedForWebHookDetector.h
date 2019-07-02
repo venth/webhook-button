@@ -10,6 +10,9 @@
 
 #include "button_messages.h"
 
+const unsigned long SHORTEST_PRESSING_DURATION_IN_MILLIS = 50;
+const unsigned long LONGEST_PRESSING_DURATION_IN_MILLIS = 1000;
+
 class ButtonPressedForWebHookDetector
         : public etl::message_router<ButtonPressedForWebHookDetector, ButtonPressedMessage> {
 private:

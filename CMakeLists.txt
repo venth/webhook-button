@@ -63,4 +63,4 @@ add_custom_target(
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
-add_executable(${PROJECT_NAME} ${SRC_LIST} lib/detectors/src/ButtonPressedForWebHookDetector.cpp lib/detectors/include/ButtonPressedForWebHookDetector.h)
+add_executable(${PROJECT_NAME} ${SRC_LIST} lib/detectors/src/ButtonPressedForWebHookDetector.cpp lib/detectors/include/ButtonPressedForWebHookDetector.h test/unit_2/test_requests_webhook_call_when_button_is_pressed_not_too_short_and_definetly_not_too_long.cpp)
