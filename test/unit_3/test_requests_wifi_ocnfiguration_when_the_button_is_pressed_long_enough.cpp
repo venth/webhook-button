@@ -1,6 +1,7 @@
 #include <unity.h>
 
 #include <etl/message_bus.h>
+
 #include <ButtonPressedForWifiConfigurationDetector.h>
 #include "button_messages.h"
 
@@ -53,6 +54,7 @@ void setUp() {
     bus = new etl::message_bus<2>();
     buttonPressedForWifiConfigurationDetector = new ButtonPressedForWifiConfigurationDetector(*bus);
     busVerifier = new assertions::MessageBusVerifier();
+
 
     bus->subscribe(*busVerifier);
     bus->subscribe(*buttonPressedForWifiConfigurationDetector);
