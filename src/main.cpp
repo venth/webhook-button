@@ -11,6 +11,22 @@
 
 #include <SoftwareSerial.h>
 
+#include "hardware/ButtonHardwareDetector.h"
+#include "ButtonPressedForWebHookDetector.h"
+#include "ButtonPressedForWifiConfigurationDetector.h"
+#include "ButtonPressingDetector.h"
+#include "InLoopProcessor.h"
+#include "MessageDumper.h"
+
+
+etl::message_bus<6> bus;
+InLoopProcessor inLoopProcessor(bus);
+ButtonHardwareDetector buttonHardwareDetector(bus);
+ButtonPressingDetector buttonPressingDetector(bus);
+ButtonPressedForWebHookDetector buttonPressedForWebHookDetector(bus);
+ButtonPressedForWifiConfigurationDetector buttonPressedForWifiConfigurationDetector(bus);
+
+MessageDumper messageDumper;
 
 SoftwareSerial ESPserial(2, 3); // RX | TX
 
@@ -40,6 +56,13 @@ void setup() {
     ESPserial.println("AT+GMR");
 
 // ***   End of additional code
+
+    bus.subscribe(messageDumper);
+    bus.subscribe(buttonHardwareDetector);
+    bus.subscribe(buttonPressingDetector);
+    bus.subscribe(buttonPressedForWebHookDetector);
+    bus.subscribe(buttonPressedForWifiConfigurationDetector);
+
 /*
     unsigned long startedAt = millis();
 
@@ -91,6 +114,5 @@ void loop() {
         return;
     }
 
-    Serial.print("PIN READ: ");
-    Serial.println(digitalRead(D2));
+    inLoopProcessor.processIt();
 }

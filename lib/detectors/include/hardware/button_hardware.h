@@ -9,8 +9,8 @@
 
 #include <Arduino.h>
 
-#define HARDWARE_BUTTON_UP LOW
-#define HARDWARE_BUTTON_DOWN HIGH
+#define HARDWARE_BUTTON_UP HIGH
+#define HARDWARE_BUTTON_DOWN LOW
 
 namespace hardware {
     static const uint8_t BUTTON_PIN   = D2;
