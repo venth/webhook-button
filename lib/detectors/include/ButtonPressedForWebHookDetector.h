@@ -10,17 +10,17 @@
 
 #include "button_messages.h"
 
-const unsigned long SHORTEST_PRESSING_DURATION_IN_MILLIS = 50;
-const unsigned long LONGEST_PRESSING_DURATION_IN_MILLIS = 1000;
-
 class ButtonPressedForWebHookDetector
         : public etl::message_router<ButtonPressedForWebHookDetector, ButtonPressedMessage> {
 private:
     etl::imessage_bus *bus;
 public:
     explicit ButtonPressedForWebHookDetector(etl::imessage_bus &bus);
-
     ~ButtonPressedForWebHookDetector() override = default;
+
+    static const unsigned long SHORTEST_PRESSING_DURATION_IN_MILLIS = 50;
+    static const unsigned long LONGEST_PRESSING_DURATION_IN_MILLIS = 1000;
+
 
     void on_receive(etl::imessage_router &sender, const ButtonPressedMessage &msg);
 

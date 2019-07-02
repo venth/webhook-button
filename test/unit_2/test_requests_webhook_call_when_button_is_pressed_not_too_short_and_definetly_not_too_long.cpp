@@ -12,7 +12,7 @@ assertions::MessageBusVerifier *busVerifier;
 
 void emits_webhook_call_reuqest_when_duration_is_at_beginning_of_the_duration_pressing_range() {
     // when presses button for at at least 50 milliseconds
-    etl::send_message(*bus, ButtonPressedMessage::of(0, SHORTEST_PRESSING_DURATION_IN_MILLIS));
+    etl::send_message(*bus, ButtonPressedMessage::of(0, ButtonPressedForWebHookDetector::SHORTEST_PRESSING_DURATION_IN_MILLIS));
 
     // then
     assertions::assertThat(busVerifier)
@@ -21,7 +21,7 @@ void emits_webhook_call_reuqest_when_duration_is_at_beginning_of_the_duration_pr
 
 void emits_webhook_call_request_when_pressing_duration_is_at_most_at_the_end_of_the_duration_pressing_range() {
     // when presses button for for a time that fits in pressing duration range
-    etl::send_message(*bus, ButtonPressedMessage::of(0, LONGEST_PRESSING_DURATION_IN_MILLIS));
+    etl::send_message(*bus, ButtonPressedMessage::of(0, ButtonPressedForWebHookDetector::LONGEST_PRESSING_DURATION_IN_MILLIS));
 
     // then
     assertions::assertThat(busVerifier)
@@ -30,7 +30,7 @@ void emits_webhook_call_request_when_pressing_duration_is_at_most_at_the_end_of_
 
 void dont_emit_webhook_call_request_when_pressing_duration_is_shorter_than_the_beginning_of_the_duration_pressing_range() {
     // when presses button for for a time that fits in pressing duration range
-    etl::send_message(*bus, ButtonPressedMessage::of(0, SHORTEST_PRESSING_DURATION_IN_MILLIS - 1));
+    etl::send_message(*bus, ButtonPressedMessage::of(0, ButtonPressedForWebHookDetector::SHORTEST_PRESSING_DURATION_IN_MILLIS - 1));
 
     // then
     assertions::assertThat(busVerifier)
@@ -39,7 +39,7 @@ void dont_emit_webhook_call_request_when_pressing_duration_is_shorter_than_the_b
 
 void dont_emit_webhook_call_request_when_pressing_duration_is_longer_than_the_the_duration_pressing_range() {
     // when presses button for for a time that fits in pressing duration range
-    etl::send_message(*bus, ButtonPressedMessage::of(0, LONGEST_PRESSING_DURATION_IN_MILLIS + 1));
+    etl::send_message(*bus, ButtonPressedMessage::of(0, ButtonPressedForWebHookDetector::LONGEST_PRESSING_DURATION_IN_MILLIS + 1));
 
     // then
     assertions::assertThat(busVerifier)

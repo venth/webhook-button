@@ -16,6 +16,7 @@ enum MessageType {
 
     LOOP_INITIATED,
     WEBHOOK_CALL_REQUESTED,
+    WIFI_CONFIGURATION_REQUESTED,
 };
 
 template<const MessageType MT_>
@@ -25,6 +26,21 @@ public:
 
     explicit BaseMessage(unsigned long timestamp) {
         this->timestamp = timestamp;
+    }
+};
+
+struct WifiConfigurationRequestedMessage : public BaseMessage<MessageType::WIFI_CONFIGURATION_REQUESTED> {
+    explicit WifiConfigurationRequestedMessage(unsigned long timestamp) : BaseMessage(timestamp) {}
+
+    static WifiConfigurationRequestedMessage &of(std::chrono::system_clock::time_point &timestamp) {
+        auto timestampInMillis = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch());
+        auto obj = new WifiConfigurationRequestedMessage(timestampInMillis.count());
+        return *obj;
+    }
+
+    static WifiConfigurationRequestedMessage &of(unsigned long timestamp) {
+        auto obj = new WifiConfigurationRequestedMessage(timestamp);
+        return *obj;
     }
 };
 
@@ -121,6 +137,16 @@ inline std::string message_to_string(const etl::imessage &s) {
     std::string duration = "";
     std::string os = "";
     switch (s.message_id) {
+        case MessageType::WIFI_CONFIGURATION_REQUESTED:
+            sprintf(buffer, "%ld", reinterpret_cast<const LoopInitiatedMessage *>(&s)->timestamp);
+            timestamp = std::string(buffer);
+            return os
+                    .append("WifiConfigurationRequestedMessage { message_id: ")
+                    .append(msgId)
+                    .append(", timestamp: ")
+                    .append(timestamp)
+                    .append(" }");
+
         case MessageType::WEBHOOK_CALL_REQUESTED:
             sprintf(buffer, "%ld", reinterpret_cast<const LoopInitiatedMessage *>(&s)->timestamp);
             timestamp = std::string(buffer);
@@ -184,6 +210,10 @@ inline bool operator==(const etl::imessage &l, const etl::imessage &r) {
         return false;
     }
     switch (l.message_id) {
+        case MessageType::WIFI_CONFIGURATION_REQUESTED:
+            return reinterpret_cast<const WifiConfigurationRequestedMessage *>(&l)->timestamp ==
+                   reinterpret_cast<const WifiConfigurationRequestedMessage *>(&r)->timestamp;
+
         case MessageType::WEBHOOK_CALL_REQUESTED:
             return reinterpret_cast<const WebHookCallRequestedMessage *>(&l)->timestamp ==
                    reinterpret_cast<const WebHookCallRequestedMessage *>(&r)->timestamp;
