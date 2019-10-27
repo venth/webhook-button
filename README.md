@@ -1,5 +1,3 @@
-# webhook-button
-
 ## Overview
 The goal is to create a button that when pushed calls a configured http(s) url.
 The idea, hardware setup has developed by my colleague - Aleksander Iwański. 

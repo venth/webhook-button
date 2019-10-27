@@ -8,6 +8,7 @@
 #include <etl/message.h>
 #include <chrono>
 #include <string>
+#include <stdio.h>
 
 enum MessageType {
     BUTTON_UP,
@@ -17,6 +18,7 @@ enum MessageType {
     LOOP_INITIATED,
     WEBHOOK_CALL_REQUESTED,
     WIFI_CONFIGURATION_REQUESTED,
+    WIFI_DISCONNECTED,
 };
 
 template<const MessageType MT_>
@@ -26,6 +28,21 @@ public:
 
     explicit BaseMessage(unsigned long timestamp) {
         this->timestamp = timestamp;
+    }
+};
+
+struct WiFiDisconnectedMessage : public BaseMessage<MessageType::WIFI_DISCONNECTED> {
+    explicit WiFiDisconnectedMessage(unsigned long timestamp) : BaseMessage(timestamp) {}
+
+    static WiFiDisconnectedMessage &of(std::chrono::system_clock::time_point &timestamp) {
+        auto timestampInMillis = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch());
+        auto obj = new WiFiDisconnectedMessage(timestampInMillis.count());
+        return *obj;
+    }
+
+    static WiFiDisconnectedMessage &of(unsigned long timestamp) {
+        auto obj = new WiFiDisconnectedMessage(timestamp);
+        return *obj;
     }
 };
 
@@ -137,6 +154,16 @@ inline std::string message_to_string(const etl::imessage &s) {
     std::string duration = "";
     std::string os = "";
     switch (s.message_id) {
+        case MessageType::WIFI_DISCONNECTED:
+            sprintf(buffer, "%ld", reinterpret_cast<const LoopInitiatedMessage *>(&s)->timestamp);
+            timestamp = std::string(buffer);
+            return os
+                    .append("WiFiDisconnectedMessage { message_id: ")
+                    .append(msgId)
+                    .append(", timestamp: ")
+                    .append(timestamp)
+                    .append(" }");
+
         case MessageType::WIFI_CONFIGURATION_REQUESTED:
             sprintf(buffer, "%ld", reinterpret_cast<const LoopInitiatedMessage *>(&s)->timestamp);
             timestamp = std::string(buffer);

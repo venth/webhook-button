@@ -15,7 +15,7 @@ private:
     etl::imessage_bus *bus;
 public:
     static const unsigned long SHORTEST_PRESSING_DURATION_IN_MILLIS = 2500;
-    static const unsigned long LONGEST_PRESSING_DURATION_IN_MILLIS = 4500;
+    static const unsigned long LONGEST_PRESSING_DURATION_IN_MILLIS = 14500;
 
     explicit ButtonPressedForWifiConfigurationDetector(etl::imessage_bus &bus);
     ~ButtonPressedForWifiConfigurationDetector() override = default;
