@@ -29,9 +29,11 @@ install:
   - platformio upgrade --dev
 
 before_script:
-  - platformio remote agent start
+  - platformio remote agent start &
 script:
   - echo "Run desktop (native) tests on Travis.CI Linux machine"
   - platformio test -e native
   - echo "Run embedded test on remote devices (NodeMCU ESP8266)"
   - platformio remote test -e nodemcuv2
+after_script:
+  - ps ax | grep -v grep | grep -i "platformio remote agent start" | cut -f2  -d' ' | xargs -I {} kill {}
