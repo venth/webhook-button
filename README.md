@@ -205,6 +205,14 @@ Then when I came back to this project it appeared that platformio upgraded itsel
     Solution of this issue was simply upgrade to dev version by command: `pio upgrade --dev` and now
     initialization just works.
 
+To improve stability after separation of tests on hardware dependent and independent, I've introduced travis.
+PlatformIO allows remote testing. So, my hope was that the hardware tests are executed on remote devices cluster.
+I didn't take into the account that I have to setup such cluster by issuing a command `platformio remote agent -n <cluster name>`
+and on a client side performing tests via: `platformio remote -a <cluster name> test -e nodemcuv2`
+I thought that the devices are supplied by platformio, unfortunately they aren't. I think that locally I can perform
+hardware tests manually and on travis, I will relay on native tests only.
+
+
 # Appendix
 ## Lectures
 * [Setup CLion and Arduino](https://www.instructables.com/id/Setup-JetBrains-Clion-for-Arduino-Development/)
