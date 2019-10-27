@@ -25,10 +25,12 @@ cache:
 
 install:
   - pip install -U platformio
-
-script:
   - echo "upgrade platformio version to 4.1 (dev) because of an error in 4.0"
   - platformio upgrade --dev
+
+before_script:
+  - platformio remote agent start
+script:
   - echo "Run desktop (native) tests on Travis.CI Linux machine"
   - platformio test -e native
   - echo "Run embedded test on remote devices (NodeMCU ESP8266)"
