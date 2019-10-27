@@ -33,8 +33,6 @@ before_script:
 script:
   - echo "Run desktop (native) tests on Travis.CI Linux machine"
   - platformio test -e native
-  - echo "Verify whether remote agent works"
-  - platformio remote agent list
   - echo "Run embedded test on remote devices (NodeMCUv2 ESP8266 - LoLin)"
   - platformio remote test -e nodemcuv2
 after_script:

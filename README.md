@@ -1,8 +1,8 @@
-## Overview
+# Goal
 The goal is to create a button that when pushed calls a configured http(s) url.
-The idea, hardware setup has developed by my colleague - Aleksander Iwański. 
+The idea of hardware setup was developed by my colleague - Aleksander Iwański. 
 
-## How will it work?
+# How will it work?
 
 The webhook button is powered up by a battery. When the webhook button is powered up WiFi is enabled. 
 The button exposes following services:
@@ -26,20 +26,25 @@ When the webhook button is pushed then it calls the configured url accordingly t
 
 # Setup
 
-* Software
-    * [platformio](https://platformio.org)
-    * [CLion](https://www.jetbrains.com/clion/)
-* Hardware
-    * Arduino NodeMCU v3 (used to ease development of targeted ESP8266)
-    * ESP8266
-    
+For hardware we decided on:
+* Arduino NodeMCU v3 (used to ease development of targeted ESP8266)
+* ESP8266
+
+Hardware without software is like an empty shell. To push some life into it, I've decided to use as base:
+* [platformio](https://platformio.org) and
+* [CLion](https://www.jetbrains.com/clion/).
+        
 ![hardware setup](hardware_setup.jpg)
    
 ## Preparation of the environment
 
 1. Install platformio
    
-    `brew install platformio`
+    `brew install platformio` or `pip install -U platformio`
+    
+    In case of platformio was installed in version 4.0.x please upgrade to 4.1.x because of an issue that
+    is corrected in 4.1.x
+    Currently 4.1.x is under development, so an upgrade to development version is required: `platformio upgrade --dev`
     
 1. Clone this project
     
@@ -63,15 +68,16 @@ When the webhook button is pushed then it calls the configured url accordingly t
     Set `constant WORKING_PROGRAM   = false;`
     compile by `platformio run` and upload `platformio run --target upload`
 
-## Daily things
+# Daily things
 
 * adding library
     * add entry in platformio.ini file to `lib_deps` property
     * update CLion project settings by executing command: `platformio init --ide clion --board nodemcuv2`
     
-## Fighting diary
+# Fighting diary
 
-* failing tests
+The first issue encountered during development was:
+* failing tests - yeah, I wrote some, because wanted to check, whether the code works on the device
 
     ```
     Please wait...
@@ -100,6 +106,7 @@ When the webhook button is pushed then it calls the configured url accordingly t
     The second issue is also corrected by change in the configuration. Adding `lib_archive = false` made platformio to omit
     archive creation.
     
+The second one were related to template library I chose to ease my life and introduce pub/sub:
 * [Embedded Template Library](https://www.etlcpp.com) compilation issues
     
     In the first approach `lib_deps =` section contained just the name of library, which caused installation of the most
@@ -112,6 +119,7 @@ When the webhook button is pushed then it calls the configured url accordingly t
     Ambiguous stl functions issue was caused by wrongly prepared `etl_profile.h` file. Currently instead of using direct include of
     a specific profile just add `#define PROFILE_XXX`
 
+The appeared that some libraries are not best choice for embedded development:
 * `pio test -e nodemcuv2` ended up with unknown error
 
     The error: 
@@ -190,6 +198,12 @@ When the webhook button is pushed then it calls the configured url accordingly t
     
     Nailing down the issue lead to `std::ostringstream` and `#include <sstream>`. The solution is
     to replace `sstream` with `combination of std::string and sprintf`.
+
+Then when I came back to this project it appeared that platformio upgraded itselves to 4.0.x version and:
+* `TypeError: 'set' object is not subscriptable` after I issued the command: `pio init --ide clion --board nodemcuv2`
+
+    Solution of this issue was simply upgrade to dev version by command: `pio upgrade --dev` and now
+    initialization just works.
 
 # Appendix
 ## Lectures
