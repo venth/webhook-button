@@ -33,7 +33,9 @@ before_script:
 script:
   - echo "Run desktop (native) tests on Travis.CI Linux machine"
   - platformio test -e native
-  - echo "Run embedded test on remote devices (NodeMCU ESP8266)"
+  - echo "Verify whether remote agent works"
+  - platformio remote agent list
+  - echo "Run embedded test on remote devices (NodeMCUv2 ESP8266 - LoLin)"
   - platformio remote test -e nodemcuv2
 after_script:
   - ps ax | grep -v grep | grep -i "remote agent start" | cut -f2  -d' ' | xargs -I '{}' kill '{}'
