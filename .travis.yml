@@ -38,4 +38,4 @@ script:
   - echo "Run embedded test on remote devices (NodeMCUv2 ESP8266 - LoLin)"
   - platformio remote test -e nodemcuv2
 after_script:
-  - ps ax | grep -v grep | grep -i "remote agent start" | cut -f2  -d' ' | xargs -I '{}' kill '{}'
+  - ps ax | grep -v grep | grep -i "platformio remote agent start" | cut -f2  -d' ' | xargs -I {} kill {}
