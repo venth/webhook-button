@@ -1,0 +1,32 @@
+@startuml
+
+skinparam {
+    handwritten true
+}
+
+actor User as user
+
+rectangle power as power.grouped_cases {
+    user -> (turns on the button)
+    user -> (turns off the button)
+    (turns on the button) -[hidden]- (turns off the button)
+}
+
+rectangle configuration as configuration.grouped_cases {
+    user -> (configures WiFi connection) : presses the button\nfor 10 sec and
+    user -> (configures web call) : presses the button\nfor 10 sec and
+    (configures WiFi connection) -[hidden]- (configures web call)
+}
+
+rectangle "web call" as web_call.grouped_cases {
+    user -> (requests execution of configured web call) : presses the button\nless than 10 sec
+}
+
+power.grouped_cases -[hidden]right- configuration.grouped_cases
+user -[hidden]left- power.grouped_cases
+user -[hidden]up- web_call.grouped_cases
+user -[hidden]right- configuration.grouped_cases
+
+
+
+@enduml
