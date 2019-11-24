@@ -1,0 +1,30 @@
+@startuml
+
+!include style/default.puml
+
+actor user
+boundary button
+control "ButtonPressedForWifi\nConfigurationDetector" as ButtonPressedForWifiConfigurationDetector
+control "WiFiConfigurationRequest\nHandler" as WiFiConfigurationRequestHandler
+control pubsub
+entity WiFiManager
+boundary RestServer
+
+user -> button : turns on
+activate button
+deactivate
+
+...
+
+user -> button : presses for 10 sec or more
+activate button
+    ButtonPressedForWifiConfigurationDetector -> pubsub : emits\nButtonPressedForWifiConfigurationRequested\nevent
+    activate pubsub
+        pubsub -> WiFiConfigurationRequestHandler : passes\nButtonPressedForWifiConfigurationRequested
+        activate WiFiConfigurationRequestHandler
+            WiFiConfigurationRequestHandler -> WiFiManager : turns on AP mode
+            WiFiConfigurationRequestHandler -> RestServer : starts
+        deactivate WiFiConfigurationRequestHandler
+    deactivate pubsub
+deactivate button
+@enduml

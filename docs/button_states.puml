@@ -1,17 +1,19 @@
 @startuml
 
+!include style/default.puml
 
 state "operational mode" as operational_mode.state
 state "configuration mode" as configuration_mode.state
+state "button off mode" as button_off_mode.state
 
-[*] -down-> operational_mode.state : user turns on\nthe button
+button_off_mode.state -down-> operational_mode.state : user turns on\nthe button
 operational_mode.state -down-> configuration_mode.state : user pressed button for\nmore than 10 sec
 configuration_mode.state -[#blue]-> configuration_mode.state : user got\ncurrent WiFi configuration
 configuration_mode.state -[#blue]-> configuration_mode.state : user got\ncurrent web call configuration
 configuration_mode.state -up-> operational_mode.state : user posted\nWiFi configuration
 configuration_mode.state -up-> operational_mode.state : user posted\nweb call configuration
 configuration_mode.state -up-> operational_mode.state : user exists\nconfiguration mode
-operational_mode.state -down-> [*]
-configuration_mode.state -down-> [*] : user turns off the button
+operational_mode.state --->  button_off_mode.state: user turns off the button
+configuration_mode.state --->  button_off_mode.state : user turns off the button
 
 @enduml

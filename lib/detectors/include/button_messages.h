@@ -18,7 +18,10 @@ enum MessageType {
     LOOP_INITIATED,
     WEBHOOK_CALL_REQUESTED,
     WIFI_CONFIGURATION_REQUESTED,
-    WIFI_DISCONNECTED,
+    WIFI_CLIENT_DISCONNECTED,
+    WIFI_CLIENT_CONNECTED,
+    WIFI_ACCESS_POINT_ACTIVATED,
+    WIFI_ACCESS_POINT_DE_ACTIVATED,
 };
 
 template<const MessageType MT_>
@@ -31,17 +34,62 @@ public:
     }
 };
 
-struct WiFiDisconnectedMessage : public BaseMessage<MessageType::WIFI_DISCONNECTED> {
-    explicit WiFiDisconnectedMessage(unsigned long timestamp) : BaseMessage(timestamp) {}
+struct WiFiAccessPointActivatedMessage : public BaseMessage<MessageType::WIFI_ACCESS_POINT_ACTIVATED> {
+    explicit WiFiAccessPointActivatedMessage(unsigned long timestamp) : BaseMessage(timestamp) {}
 
-    static WiFiDisconnectedMessage &of(std::chrono::system_clock::time_point &timestamp) {
+    static WiFiAccessPointActivatedMessage &of(std::chrono::system_clock::time_point &timestamp) {
         auto timestampInMillis = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch());
-        auto obj = new WiFiDisconnectedMessage(timestampInMillis.count());
+        auto obj = new WiFiAccessPointActivatedMessage(timestampInMillis.count());
         return *obj;
     }
 
-    static WiFiDisconnectedMessage &of(unsigned long timestamp) {
-        auto obj = new WiFiDisconnectedMessage(timestamp);
+    static WiFiAccessPointActivatedMessage &of(unsigned long timestamp) {
+        auto obj = new WiFiAccessPointActivatedMessage(timestamp);
+        return *obj;
+    }
+};
+
+struct WiFiAccessPointDeActivatedMessage : public BaseMessage<MessageType::WIFI_ACCESS_POINT_DE_ACTIVATED> {
+    explicit WiFiAccessPointDeActivatedMessage(unsigned long timestamp) : BaseMessage(timestamp) {}
+
+    static WiFiAccessPointDeActivatedMessage &of(std::chrono::system_clock::time_point &timestamp) {
+        auto timestampInMillis = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch());
+        auto obj = new WiFiAccessPointDeActivatedMessage(timestampInMillis.count());
+        return *obj;
+    }
+
+    static WiFiAccessPointDeActivatedMessage &of(unsigned long timestamp) {
+        auto obj = new WiFiAccessPointDeActivatedMessage(timestamp);
+        return *obj;
+    }
+};
+
+struct WiFiClientDisconnectedMessage : public BaseMessage<MessageType::WIFI_CLIENT_DISCONNECTED> {
+    explicit WiFiClientDisconnectedMessage(unsigned long timestamp) : BaseMessage(timestamp) {}
+
+    static WiFiClientDisconnectedMessage &of(std::chrono::system_clock::time_point &timestamp) {
+        auto timestampInMillis = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch());
+        auto obj = new WiFiClientDisconnectedMessage(timestampInMillis.count());
+        return *obj;
+    }
+
+    static WiFiClientDisconnectedMessage &of(unsigned long timestamp) {
+        auto obj = new WiFiClientDisconnectedMessage(timestamp);
+        return *obj;
+    }
+};
+
+struct WiFiClientConnectedMessage : public BaseMessage<MessageType::WIFI_CLIENT_CONNECTED> {
+    explicit WiFiClientConnectedMessage(unsigned long timestamp) : BaseMessage(timestamp) {}
+
+    static WiFiClientConnectedMessage &of(std::chrono::system_clock::time_point &timestamp) {
+        auto timestampInMillis = std::chrono::duration_cast<std::chrono::milliseconds>(timestamp.time_since_epoch());
+        auto obj = new WiFiClientConnectedMessage(timestampInMillis.count());
+        return *obj;
+    }
+
+    static WiFiClientConnectedMessage &of(unsigned long timestamp) {
+        auto obj = new WiFiClientConnectedMessage(timestamp);
         return *obj;
     }
 };
@@ -154,11 +202,41 @@ inline std::string message_to_string(const etl::imessage &s) {
     std::string duration = "";
     std::string os = "";
     switch (s.message_id) {
-        case MessageType::WIFI_DISCONNECTED:
+        case MessageType::WIFI_ACCESS_POINT_ACTIVATED:
             sprintf(buffer, "%ld", reinterpret_cast<const LoopInitiatedMessage *>(&s)->timestamp);
             timestamp = std::string(buffer);
             return os
-                    .append("WiFiDisconnectedMessage { message_id: ")
+                    .append("WiFiAccessPointActivatedMessage { message_id: ")
+                    .append(msgId)
+                    .append(", timestamp: ")
+                    .append(timestamp)
+                    .append(" }");
+
+        case MessageType::WIFI_ACCESS_POINT_DE_ACTIVATED:
+            sprintf(buffer, "%ld", reinterpret_cast<const LoopInitiatedMessage *>(&s)->timestamp);
+            timestamp = std::string(buffer);
+            return os
+                    .append("WiFiAccessPointDeActivatedMessage { message_id: ")
+                    .append(msgId)
+                    .append(", timestamp: ")
+                    .append(timestamp)
+                    .append(" }");
+
+        case MessageType::WIFI_CLIENT_CONNECTED:
+            sprintf(buffer, "%ld", reinterpret_cast<const LoopInitiatedMessage *>(&s)->timestamp);
+            timestamp = std::string(buffer);
+            return os
+                    .append("WiFiClientConnectedMessage { message_id: ")
+                    .append(msgId)
+                    .append(", timestamp: ")
+                    .append(timestamp)
+                    .append(" }");
+
+        case MessageType::WIFI_CLIENT_DISCONNECTED:
+            sprintf(buffer, "%ld", reinterpret_cast<const LoopInitiatedMessage *>(&s)->timestamp);
+            timestamp = std::string(buffer);
+            return os
+                    .append("WiFiClientDisconnectedMessage { message_id: ")
                     .append(msgId)
                     .append(", timestamp: ")
                     .append(timestamp)
@@ -237,6 +315,22 @@ inline bool operator==(const etl::imessage &l, const etl::imessage &r) {
         return false;
     }
     switch (l.message_id) {
+        case MessageType::WIFI_ACCESS_POINT_DE_ACTIVATED:
+            return reinterpret_cast<const WiFiAccessPointDeActivatedMessage *>(&l)->timestamp ==
+                   reinterpret_cast<const WiFiAccessPointDeActivatedMessage *>(&r)->timestamp;
+
+        case MessageType::WIFI_ACCESS_POINT_ACTIVATED:
+            return reinterpret_cast<const WiFiAccessPointActivatedMessage *>(&l)->timestamp ==
+                   reinterpret_cast<const WiFiAccessPointActivatedMessage *>(&r)->timestamp;
+
+        case MessageType::WIFI_CLIENT_CONNECTED:
+            return reinterpret_cast<const WiFiClientConnectedMessage *>(&l)->timestamp ==
+                   reinterpret_cast<const WiFiClientConnectedMessage *>(&r)->timestamp;
+
+        case MessageType::WIFI_CLIENT_DISCONNECTED:
+            return reinterpret_cast<const WiFiClientDisconnectedMessage *>(&l)->timestamp ==
+                   reinterpret_cast<const WiFiClientDisconnectedMessage *>(&r)->timestamp;
+
         case MessageType::WIFI_CONFIGURATION_REQUESTED:
             return reinterpret_cast<const WifiConfigurationRequestedMessage *>(&l)->timestamp ==
                    reinterpret_cast<const WifiConfigurationRequestedMessage *>(&r)->timestamp;

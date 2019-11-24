@@ -1,0 +1,23 @@
+@startuml
+
+start
+
+partition "main - setup" {
+    :configure micro-controller;
+    :create button-handler;
+}
+
+stop
+
+start
+partition "main - loop" {
+    :delegate processing\nto button handler;
+}
+stop
+
+start
+partition "button-handler - process it" {
+}
+
+
+@enduml

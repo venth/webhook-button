@@ -1,0 +1,12 @@
+@startuml
+
+!ifndef _STYLE_DEFAULT_PLANTUML_
+!define _STYLE_DEFAULT_PLANTUML_
+
+skinparam {
+    handwritten true
+}
+
+!endif
+
+@enduml

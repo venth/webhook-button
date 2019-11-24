@@ -40,6 +40,7 @@ static const uint8_t ARDUINO_NODECMU_V3_BUILT_IN_LED = D4;
 static const boolean WORKING_PROGRAM = true;
 
 void setup() {
+    WiFi.onSoftAPModeStationConnected()
     if (!WORKING_PROGRAM) {
         return;
     }

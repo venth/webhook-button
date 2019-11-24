@@ -13,6 +13,11 @@ namespace hardware {
     class WiFiStateListener {
     private:
         etl::imessage_bus *bus;
+
+        void handleOnStationModeGotIP(const WiFiEventStationModeGotIP& event);
+        void handleOnStationModeDisconnected(const WiFiEventStationModeDisconnected& event);
+        void handleOnSoftAPModeStationConnected(const WiFiEventSoftAPModeStationConnected& event);
+        void handleOnSoftAPModeStationDisconnected(const WiFiEventSoftAPModeStationDisconnected& event);
     public:
         explicit WiFiStateListener(etl::imessage_bus &bus);
         ~WiFiStateListener() = default;

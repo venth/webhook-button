@@ -1,8 +1,6 @@
 @startuml
 
-skinparam {
-    handwritten true
-}
+!include style/default.puml
 
 actor User as user
 
@@ -13,13 +11,13 @@ rectangle power as power.grouped_cases {
 }
 
 rectangle configuration as configuration.grouped_cases {
-    user -> (configures WiFi connection) : presses the button\nfor 10 sec and
-    user -> (configures web call) : presses the button\nfor 10 sec and
+    user -> (configures WiFi connection) : presses the button\nfor 10 or more sec and
+    user -> (configures web call) : presses the button\nfor 10 or more sec and
     (configures WiFi connection) -[hidden]- (configures web call)
 }
 
 rectangle "web call" as web_call.grouped_cases {
-    user -> (requests execution of configured web call) : presses the button\nless than 10 sec
+    user -> (requests execution of configured web call) : presses the button\nless than 10 or more sec
 }
 
 power.grouped_cases -[hidden]right- configuration.grouped_cases
