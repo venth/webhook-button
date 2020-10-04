@@ -5,6 +5,7 @@
 #include <ESP8266WiFi.h>
 
 #include "hardware/WiFiConfigurationRequestHandler.h"
+#include <button_messages.h>
 
 namespace hardware {
     WiFiConfigurationRequestHandler::WiFiConfigurationRequestHandler(etl::imessage_bus &bus,
@@ -24,7 +25,7 @@ namespace hardware {
                                                      const WifiConfigurationRequestedMessage &msg) {
         WiFi.persistent(false);
         WiFi.disconnect(true);
-        etl::send_message(*this->bus, WiFiDisconnectedMessage::of(nowInMills()));
+//        etl::send_message(*this->bus, WiFiClientConnectedMessage::of(nowInMills()));
         WiFi.mode(WIFI_AP);
         WiFi.softAPConfig(*this->apAddress, *this->apAddress, *this->apCidr);
         WiFi.softAP(this->apName->c_str(), this->apPassword->c_str());

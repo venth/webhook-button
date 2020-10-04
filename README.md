@@ -214,6 +214,8 @@ hardware tests manually and on travis, I will relay on native tests only.
 
 
 # Appendix
+##
+*  ![NodeMCU-V3 Pinout](NodeMCU-V3_pinout.png)
 ## Lectures
 * [Setup CLion and Arduino](https://www.instructables.com/id/Setup-JetBrains-Clion-for-Arduino-Development/)
 * [Clion, Arduino and platformio combo setup](https://stuetzpunkt.wordpress.com/2017/06/26/a-first-program-with-esp8266esp-01-clion-and-platformio/)
@@ -227,3 +229,4 @@ hardware tests manually and on travis, I will relay on native tests only.
 * [Embedded Template Library](https://www.etlcpp.com)
 * [Arduino official documentation](https://www.arduino.cc/reference/en/language/functions/digital-io/digitalread/)
 * [Nodemcu pinout](https://circuits4you.com/2017/12/31/nodemcu-pinout/)
+
